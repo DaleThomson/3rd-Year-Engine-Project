@@ -1,0 +1,8 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(395,5): warning MSB8029: The Intermediate directory or Output directory cannot reside under the Temporary directory as it could lead to issues with incremental build.
+  Player.cpp
+c:\temp\final engine - main version\final engine\md2model.h(40): warning C4005: 'WIN32': macro redefinition
+  c:\temp\final engine - main version\final engine\md2model.h(40): note: command-line arguments:  see previous definition of 'WIN32'
+c:\temp\final engine - main version\final engine\player.cpp(183): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\temp\final engine - main version\final engine\player.cpp(200): warning C4305: 'argument': truncation from 'double' to 'float'
+  Final Engine.vcxproj -> C:\temp\Final Engine - MAIN VERSION\Debug\Final Engine.exe
+  Final Engine.vcxproj -> C:\temp\Final Engine - MAIN VERSION\Debug\Final Engine.pdb (Partial PDB)

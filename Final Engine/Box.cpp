@@ -1,0 +1,69 @@
+#include "Box.h"
+
+void Box::init()
+{
+	//shader
+	shaderProgram = rt3d::initShaders("../Resources/Shaders/phong.vert", "../Resources/Shaders/phong.frag");
+	rt3d::setLight(shaderProgram, light0);
+	rt3d::setMaterial(shaderProgram, material1);
+
+	//model loading
+	rt3d::loadObj("../Resources/3D_Objects/cube.obj", verts, norms, tex_coords, indices);
+	meshIndexCount[0] = indices.size();
+	textures[0] = loadTexture::loadTextures("../Resources/Textures/Bananas.png");
+	meshObjects[0] = rt3d::createMesh(verts.size() / 3, verts.data(), nullptr, norms.data(), tex_coords.data(),
+		meshIndexCount[0], indices.data());
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+glm::vec3 Box::getPosition()
+{
+	return position;
+}
+
+void Box::setPosition(glm::vec3 setPosition)
+{
+	position = setPosition;
+}
+
+glm::vec3 Box::getScale()
+{
+	return scale;
+}
+
+void Box::draw(SDL_Window* window)
+{
+	glm::mat4 modelview(1.0); // set base position for scene
+	glm::mat4 projection(1.0);
+	projection = glm::perspective(float(60.0f*DEG_TO_RADIAN), 800.0f / 600.0f, 1.0f, 150.0f);
+	rt3d::setUniformMatrix4fv(shaderProgram, "projection", glm::value_ptr(projection));
+	stack<glm::mat4> mvStack;
+	mvStack.push(modelview);
+
+	camera::setAt(Move::moveForward(camera::getEye(), Move::getRotation(), 1.0f));
+	mvStack.top() = glm::lookAt(camera::getEye(), camera::getAt(), camera::getUp());
+
+	glUseProgram(shaderProgram);
+
+
+	glBindTexture(GL_TEXTURE_2D, texture);
+	mvStack.push(mvStack.top());
+	mvStack.top() = glm::translate(mvStack.top(), position);
+	mvStack.top() = glm::rotate(mvStack.top(), float(90.0f * DEG_TO_RADIAN), glm::vec3(0.0f, 1.0f, 0.0f));
+	mvStack.top() = glm::scale(mvStack.top(), scale);
+	rt3d::setUniformMatrix4fv(shaderProgram, "projection", glm::value_ptr(projection));
+	rt3d::setUniformMatrix4fv(shaderProgram, "modelview", glm::value_ptr(mvStack.top()));
+	rt3d::setMaterial(shaderProgram, material1);
+	rt3d::drawIndexedMesh(meshObjects[0], meshIndexCount[0], GL_TRIANGLES);
+	mvStack.pop();
+
+	glDepthMask(GL_TRUE);
+}
+
+void Box::update()
+{
+	getPosition();
+}
